@@ -35,29 +35,17 @@ make deployK8
 Please read the [Makefile](k8s/Makefile) for more details on the commands
 
 
-## Cloudfoundry
-### Prerequisites deployment to CloudFoundry
+## Epinio.io
+### Prerequisites deployment to Epinio
 
-* [CF cli](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html#pkg)
-```ssh
-$ brew install cloudfoundry/tap/cf-cli
-```
-* Get CloudFoundry Landscape:
-    - [Pivotal/VMWare Tanzu](https://account.run.pivotal.io/z/uaa/sign-up)
-    - [IBM Bluemix](https://cloud.ibm.com/registration)
-    - [SAP Cloud](https://www.sap.com/cmp/td/sap-cloud-platform-trial.html)
-* or Create your own in AWS/Azure:
-    - [**KubeCF in KinD**](https://kubecf.io/docs/tutorials/deploy-kind/)
-    - [Tanzu on Azure](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/pivotal.pivotal-cloud-foundry)
-    - [Tanzu on Google](https://tanzu.vmware.com/partners/google)
-    - [Pivotal Cloud Foundry on AWS](https://aws.amazon.com/quickstart/architecture/pivotal-cloud-foundry/)
-* or install your own via Terraform
-    - [AWS](https://docs.pivotal.io/platform/ops-manager/2-9/aws/prepare-env-terraform.html)
-    - In the above same link, you see scripts for Google and Azure
+* [Epinio cli](https://docs.epinio.io/installation/install_epinio_cli#from-homebrew-linux-and-mac)
+* Install Epinio Landscape:
+    - https://docs.epinio.io/installation/install_epinio
+
 ### Setup
-For below instruction, we are assuming you have created a free CF acount from [Pivotal](https://account.run.pivotal.io/z/uaa/). We are using their free backing service from there.
+Instruction below is using CloudFoundry/Heruku like.. assuming you have epinio stack install, your experience is similar to CF-like. Do you see how easy as compare to K8 and even docker.
 
-* Login into CF account. Read quick [tutorial](https://docs.cloudfoundry.org/cf-cli/getting-started.html#login)
+* Login into CF account.
 
 * Activate environment before running deployment script
 ```ssh
