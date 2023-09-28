@@ -33,3 +33,5 @@ class GetOrderSchema(Schema):
 
     id = fields.Int()
     order_details = fields.Nested(OrderDetail, many=True)
+
+

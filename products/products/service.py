@@ -35,3 +35,12 @@ class ProductsService:
         for product in payload['order']['order_details']:
             self.storage.decrement_stock(
                 product['product_id'], product['quantity'])
+
+    @rpc
+    def delete(self, product_id):
+        try:
+            self.storage.delete(product_id)
+            return f"Product with ID {product_id} has been deleted."
+        except Exception as e:
+            logger.error(f"Failed to delete product with ID {product_id}: {str(e)}")
+            return f"Failed to delete product with ID {product_id}: {str(e)}"

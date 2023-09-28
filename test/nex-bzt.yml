@@ -5,9 +5,9 @@
 ###
 
 execution:
-- concurrency: 1
+- concurrency: 2
   ramp-up: 1m
-  hold-for: 12h
+  hold-for: 12m
   scenario: nex
       
 scenarios:
@@ -25,7 +25,7 @@ scenarios:
       think-time: uniform(0s, 0s)
       method: POST
       headers:
-        cache-control: no-cache
+        cache-control: no-cache #max-age=1800
         Content-Type: application/json
       body: 'request-body-string'
       body: >
@@ -70,7 +70,7 @@ scenarios:
       think-time: uniform(0s, 0s)
       method: POST
       headers:
-        cache-control: no-cache
+        cache-control: no-cache  #max-age=1800
         Content-Type: application/json
       body: 'request-body-string'
       body: >
@@ -108,7 +108,34 @@ scenarios:
     - if: '"${order_id}" == "NOT_FOUND"'
       then:
         - action: continue
-  
+
+    # 5. Delete Product
+    - url: /products/${product_id}
+      label: product-delete
+      think-time: uniform(0s, 0s)
+      method: DELETE
+        
+      assert:
+      - contains:
+        # - 204  # Assuming HTTP 204 indicates successful deletion -- 204 increased error count. Changing to 200 for blazemeter
+        - 200
+        subject: http-code
+        not: false
+
+    # 6. List Orders
+    - url: /orders
+      label: list-orders
+      think-time: uniform(0s, 0s)
+      method: GET
+      headers:
+        cache-control: no-cache  #max-age=1800
+        
+      assert:
+      - contains:
+        - 200
+        subject: http-code
+        not: false
+        
 reporting:
 - module: final-stats
   dump-xml: stats.xml

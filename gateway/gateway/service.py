@@ -6,6 +6,7 @@ from nameko.exceptions import BadRequest
 from nameko.rpc import RpcProxy
 from werkzeug import Response
 
+
 from gateway.entrypoints import http
 from gateway.exceptions import OrderNotFound, ProductNotFound
 from gateway.schemas import CreateOrderSchema, GetOrderSchema, ProductSchema
@@ -73,6 +74,15 @@ class GatewayService(object):
         return Response(
             json.dumps({'id': product_data['id']}), mimetype='application/json'
         )
+
+    @http("DELETE", "/products/<string:product_id>", expected_exceptions=ProductNotFound)
+    def delete_product(self, request, product_id):
+        result = self.products_rpc.delete(product_id)
+        if result: 
+            return Response(status=200)
+        else:
+            raise ProductNotFound("Product ID {} does not exist".format(product_id))
+
 
     @http("GET", "/orders/<int:order_id>", expected_exceptions=OrderNotFound)
     def get_order(self, request, order_id):
@@ -172,3 +182,14 @@ class GatewayService(object):
             serialized_data['order_details']
         )
         return result['id']
+
+    @http(
+        "GET", "/orders", expected_exceptions=OrderNotFound)
+    def list_orders(self, request):
+        """Lists all orders
+        """
+        orders = self.orders_rpc.list_orders()
+        return Response(
+            GetOrderSchema(many=True).dumps(orders).data,
+            mimetype='application/json'
+        ) #Multi-purpose Internet Mail Extensions

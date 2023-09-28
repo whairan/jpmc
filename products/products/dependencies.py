@@ -27,14 +27,28 @@ class StorageWrapper:
     def _format_key(self, product_id):
         return 'products:{}'.format(product_id)
 
-    def _from_hash(self, document):
+    # def _from_hash(self, document):
+    #     return {
+    #         'id': document[b'id'].decode('utf-8'),
+    #         'title': document[b'title'].decode('utf-8'),
+    #         'passenger_capacity': int(document[b'passenger_capacity']),
+    #         'maximum_speed': int(document[b'maximum_speed']),
+    #         'in_stock': int(document[b'in_stock'])
+    #     }
+    def _from_hash(self, document): #made the following changes because I was getting a decoding error. Saved error on local for documentation.
+        def decode_bytes(key):
+            # Check if the key exists in the dictionary before decoding
+            if key in document:
+                return document[key].decode('utf-8')
+            return None  # Return None if the key does not exist
         return {
-            'id': document[b'id'].decode('utf-8'),
-            'title': document[b'title'].decode('utf-8'),
-            'passenger_capacity': int(document[b'passenger_capacity']),
-            'maximum_speed': int(document[b'maximum_speed']),
-            'in_stock': int(document[b'in_stock'])
+            'id': decode_bytes(b'id'),
+            'title': decode_bytes(b'title'),
+            'passenger_capacity': int(decode_bytes(b'passenger_capacity') or 0),  # Handle missing or invalid values
+            'maximum_speed': int(decode_bytes(b'maximum_speed') or 0),  # Handle missing or invalid values
+            'in_stock': int(decode_bytes(b'in_stock') or 0)  # Handle missing or invalid values
         }
+
 
     def get(self, product_id):
         product = self.client.hgetall(self._format_key(product_id))
@@ -57,6 +71,11 @@ class StorageWrapper:
         return self.client.hincrby(
             self._format_key(product_id), 'in_stock', -amount)
 
+    def delete(self, product_id):
+        key = self._format_key(product_id)
+        deleted = self.client.delete(key)
+        if not deleted:
+            raise NotFound(f'Product with ID {product_id} not found')
 
 class Storage(DependencyProvider):
 
